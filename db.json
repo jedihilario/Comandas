@@ -1,0 +1,14 @@
+[
+    {
+        "order": "Hamburguesa con queso",
+        "client": "hilario",
+        "amount": "4500",
+        "delivery": true
+    },
+    {
+        "order": "Pizza clasica",
+        "client": "maxi",
+        "amount": "1000",
+        "delivery": false
+    }
+]
