@@ -2,9 +2,9 @@ class Comanda:
     def __init__(self, order, client, amount, delivery) -> None:
         self.order = order
         self.client = client.lower()
-        self.amount = amount
+        self.amount = int(amount)
         
-        if (delivery in 'Ss'):
+        if (str(delivery) in 'Ss' or delivery):
             self.delivery = True
         else:
             self.delivery = False

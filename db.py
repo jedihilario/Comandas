@@ -14,6 +14,10 @@ class Query:
         with open('db.json', 'w') as db:
             json.dump(actual_data, db, indent=4)
 
+    def deleteDB():
+        with open('db.json', 'w') as db:
+            json.dump([], db, indent=4)
+
     def selectDelivery ():
         response = []
 

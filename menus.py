@@ -13,7 +13,7 @@ def upload ():
 
     comanda = Comanda(*(i for i in data))
     comandas.append(comanda)
-    # Query.insert(comanda.getAttributesAsDict())
+    Query.insert(comanda.getAttributesAsDict())
 
     mainMenu()
 
@@ -58,7 +58,7 @@ def listar ():
 def listarEnvios ():
     res = Query.selectDelivery()
 
-    deliveries = [Comanda(*(comanda for comanda in res))]
+    deliveries = [Comanda(*i) for i in res]
 
     for delivery in deliveries:
         print(f'''\n {'-' * 8} 
@@ -68,14 +68,17 @@ def listarEnvios ():
 | Precio: {delivery.amount}
 |
  {'-' * 8} ''')
+        
+    input()
+    mainMenu()
 
 def revenue ():
     os.system('cls')
 
     result = 0
 
-    for comanda in comandas:
-        result += int(comanda.amount)
+    for comanda in Query.selectAll():
+        result += comanda['amount']
 
     res = Title(f'La ganancia del dia es de: {result}', 'green', 2, 2, '*')
     res.render()
