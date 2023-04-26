@@ -22,27 +22,10 @@ def upload ():
 
 def delete ():
     os.system('cls')
-    try:
-        res = Query.selectAll()
 
-        comandas = [Comanda(*i) for i in res]
+    target = (input('Ingrese el apellido de la comanda que quiere eliminar: ')).lower()
 
-        target = (input('Ingrese el apellido de la comanda que quiere eliminar: ')).lower()
-        
-        for i, comanda in enumerate(comandas):
-            if (target == comanda.client.lower()):
-                target = i; break
-
-        try: 
-            comandas.pop(target)
-            Query.deleteDB()
-            if (len(comandas) > 0):
-                Query.insert(comandas)
-            print('Comanda eliminada!')
-        except:
-            print('No se encontro la comanda para eliminar :(')
-    except:
-        print('Ocurrio un error :(')
+    Query.delete(target)
 
     input()
     mainMenu()
@@ -50,33 +33,7 @@ def delete ():
 def modify ():
     os.system('cls')
 
-    # try:
-    res = Query.selectAll()
-
-    comandas = [Comanda(*i) for i in res]
-
-    target = (input('Ingrese el apellido de la comanda que quiere eliminar: ')).lower()
     
-    for i, comanda in enumerate(comandas):
-        if (target == comanda.client.lower()):
-            target = i; break
-        
-    form = Form(['orden', 'cliente', 'monto', 'para llevar'])
-    data = form.render()
-
-    comandas[target] = Comanda(Comanda(*(i for i in data)))
-    comandas[target].applyDiscount()
-
-    for i, com in enumerate(comandas): comandas[i] = com.getAttributesAsDict()
-
-    Query.deleteDB()
-
-    Query.insert(comandas)
-
-    print('Comanda modificada con exito! :)')
-        
-    # except:
-    #     print('Hubo un error :(')
 
     input()
     mainMenu()
@@ -86,7 +43,13 @@ def listar ():
     try:
         res = Query.selectAll()
 
-        comandas = [Comanda(*i) for i in res]
+        data = []
+
+        for com in res:
+                values = com.values()
+                data.append(values)
+
+        comandas = [Comanda(*i) for i in data]
 
         for comanda in comandas:
             print(f'''\n {'-' * 8}
@@ -97,7 +60,7 @@ def listar ():
 |
 | {delivery_senteneces[str(comanda.delivery)]}
 |
-    {'-' * 8} ''')
+{'-' * 8} ''')
     except:
         print('No hay comandas cargadas!')
 
@@ -106,21 +69,18 @@ def listar ():
 
 def listarEnvios ():
     os.system('cls')
-    try:
-        res = Query.selectDelivery()
+    res = Query.selectDelivery()
 
-        comandas = [Comanda(*i) for i in res]
+    comandas = [Comanda(*i) for i in res]
 
-        for delivery in comandas:
-            print(f'''\n {'-' * 8} 
+    for delivery in comandas:
+        print(f'''\n {'-' * 8} 
 |
 | Orden: {delivery.order}
 | Cliente: {delivery.client}
 | Precio: {delivery.amount}
 |
-    {'-' * 8} ''')
-    except:
-        print('No hay comandas cargadas!')
+{'-' * 8} ''')
         
     input()
     mainMenu()

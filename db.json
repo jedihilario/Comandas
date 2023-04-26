@@ -1,0 +1,14 @@
+[
+    {
+        "order": "Hamburger",
+        "client": "Maxi",
+        "amount": 142,
+        "delivery": false
+    },
+    {
+        "order": "Hilario",
+        "client": "Pizza",
+        "amount": 2345,
+        "delivery": true
+    }
+]

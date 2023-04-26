@@ -1,17 +1,11 @@
 import json
 
 class Query:
-    def selectAll ():
-        res = []
-
+    def selectAll():
         with open('db.json') as db:
             data = json.load(db)
 
-            for com in data:
-                values = com.values()
-                res.append(values)
-
-        return res
+        return data
     
     def insert (data):
         actual_data = Query.selectAll()
@@ -20,6 +14,20 @@ class Query:
 
         with open('db.json', 'w') as db:
             json.dump(actual_data, db, indent=4)
+
+    def delete(client):
+        actual_data = Query.selectAll()
+        target = 0
+
+        for i, comanda in enumerate(actual_data):
+            if(comanda['client'] == client):
+                target = i; break
+            
+        actual_data.pop(target)
+
+        with open('db.json', 'w') as db:
+            json.dump(actual_data, db, indent=4)
+
 
     def deleteDB():
         with open('db.json', 'w') as db:
