@@ -3,7 +3,10 @@ from pui import *
 from comanda import Comanda
 from db import Query
 
-comandas = []
+delivery_senteneces = {
+    'False': 'Comanda sin envio',
+    'True' : 'Comanda con envio'
+}
 
 def upload ():
     os.system('cls')
@@ -12,62 +15,112 @@ def upload ():
     data = form.render()
 
     comanda = Comanda(*(i for i in data))
-    comandas.append(comanda)
+    comanda.applyDiscount()
     Query.insert(comanda.getAttributesAsDict())
 
     mainMenu()
 
 def delete ():
     os.system('cls')
+    try:
+        res = Query.selectAll()
 
-    target = (input('Ingrese el apellido de la comanda que quiere eliminar: ')).lower()
-    
-    for i, comanda in enumerate(comandas):
-        if (target == comanda.client):
-            target = i; break
+        comandas = [Comanda(*i) for i in res]
 
-    try: 
-        comandas.pop(target)
-        print('Comanda eliminada!')
+        target = (input('Ingrese el apellido de la comanda que quiere eliminar: ')).lower()
+        
+        for i, comanda in enumerate(comandas):
+            if (target == comanda.client.lower()):
+                target = i; break
+
+        try: 
+            comandas.pop(target)
+            Query.deleteDB()
+            if (len(comandas) > 0):
+                Query.insert(comandas)
+            print('Comanda eliminada!')
+        except:
+            print('No se encontro la comanda para eliminar :(')
     except:
-        print('No se encontro la comanda para eliminar :(')
+        print('Ocurrio un error :(')
 
     input()
     mainMenu()
 
 def modify ():
-    pass
+    os.system('cls')
+
+    # try:
+    res = Query.selectAll()
+
+    comandas = [Comanda(*i) for i in res]
+
+    target = (input('Ingrese el apellido de la comanda que quiere eliminar: ')).lower()
+    
+    for i, comanda in enumerate(comandas):
+        if (target == comanda.client.lower()):
+            target = i; break
+        
+    form = Form(['orden', 'cliente', 'monto', 'para llevar'])
+    data = form.render()
+
+    comandas[target] = Comanda(Comanda(*(i for i in data)))
+    comandas[target].applyDiscount()
+
+    for i, com in enumerate(comandas): comandas[i] = com.getAttributesAsDict()
+
+    Query.deleteDB()
+
+    Query.insert(comandas)
+
+    print('Comanda modificada con exito! :)')
+        
+    # except:
+    #     print('Hubo un error :(')
+
+    input()
+    mainMenu()
 
 def listar ():
     os.system('cls')
+    try:
+        res = Query.selectAll()
 
-    for comanda in comandas:
-        print(f'''\n {'-' * 8} 
+        comandas = [Comanda(*i) for i in res]
+
+        for comanda in comandas:
+            print(f'''\n {'-' * 8}
 |
 | Orden: {comanda.order}
 | Cliente: {comanda.client}
 | Precio: {comanda.amount}
 |
-| Para llevar: {comanda.delivery}
+| {delivery_senteneces[str(comanda.delivery)]}
 |
- {'-' * 8} ''')
+    {'-' * 8} ''')
+    except:
+        print('No hay comandas cargadas!')
 
     input()
     mainMenu()
 
 def listarEnvios ():
-    res = Query.selectDelivery()
+    os.system('cls')
+    try:
+        res = Query.selectDelivery()
 
-    deliveries = [Comanda(*i) for i in res]
+        comandas = [Comanda(*i) for i in res]
 
-    for delivery in deliveries:
-        print(f'''\n {'-' * 8} 
+        for delivery in comandas:
+            print(f'''\n {'-' * 8} 
 |
 | Orden: {delivery.order}
 | Cliente: {delivery.client}
 | Precio: {delivery.amount}
 |
- {'-' * 8} ''')
+    {'-' * 8} ''')
+    except:
+        print('No hay comandas cargadas!')
         
     input()
     mainMenu()
@@ -76,12 +129,15 @@ def revenue ():
     os.system('cls')
 
     result = 0
+    try:
+        for comanda in Query.selectAll():
+            result += comanda['amount']
 
-    for comanda in Query.selectAll():
-        result += comanda['amount']
+        res = Title(f'La ganancia del dia es de: {result}', 'green', 2, 2, '*')
+        res.render()
+    except:
+        print('No hay comandas cargadas!')
 
-    res = Title(f'La ganancia del dia es de: {result}', 'green', 2, 2, '*')
-    res.render()
     input()
     mainMenu()
 

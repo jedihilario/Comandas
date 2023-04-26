@@ -2,9 +2,16 @@ import json
 
 class Query:
     def selectAll ():
+        res = []
+
         with open('db.json') as db:
             data = json.load(db)
-        return data
+
+            for com in data:
+                values = com.values()
+                res.append(values)
+
+        return res
     
     def insert (data):
         actual_data = Query.selectAll()
